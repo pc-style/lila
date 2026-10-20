@@ -6,6 +6,7 @@ import { bind, dataIcon, onInsert } from 'lib/view';
 import { userLink } from 'lib/view/userLink';
 
 import type AnalyseCtrl from '@/ctrl';
+import { renderReview } from '@/review/reviewView';
 import { findTag } from '@/study/studyChapters';
 
 import type { AnalysisMetaSide, GamePhase } from '../interfaces';
@@ -92,15 +93,26 @@ const doRender = (ctrl: AnalyseCtrl): VNode => {
       playerTable(ctrl, 'white'),
       ctrl.study
         ? null
-        : h(
-            'a.button.text',
-            {
-              class: { active: !!ctrl.retro },
-              attrs: dataIcon(licon.PlayTriangle),
-              hook: bind('click', ctrl.toggleRetro, ctrl.redraw),
-            },
-            i18n.site.learnFromYourMistakes,
-          ),
+        : h('div.advice-summary__actions', [
+            h(
+              'a.button.text',
+              {
+                class: { active: !!ctrl.retro },
+                attrs: dataIcon(licon.PlayTriangle),
+                hook: bind('click', ctrl.toggleRetro, ctrl.redraw),
+              },
+              i18n.site.learnFromYourMistakes,
+            ),
+            h(
+              'a.button.text',
+              {
+                class: { active: ctrl.review.active() },
+                attrs: dataIcon(licon.Microscope),
+                hook: bind('click', ctrl.toggleReview, ctrl.redraw),
+              },
+              'Game review',
+            ),
+          ]),
       playerTable(ctrl, 'black'),
     ],
   );
@@ -138,11 +150,13 @@ export function render(ctrl: AnalyseCtrl): VNode | undefined {
 
   // don't cache until the analysis is complete!
   const buster = ctrl.mainlineAnalysis.partial ? Math.random() : '';
-  let cacheKey = String(buster) + !!ctrl.retro + Boolean(ctrl.idbTree.hasLocalAnalysis);
+  const review = ctrl.review.active();
+  let cacheKey = String(buster) + !!ctrl.retro + review + Boolean(ctrl.idbTree.hasLocalAnalysis);
   if (ctrl.study) cacheKey += ctrl.study.data.chapter.id;
 
   return h('div.analyse__round-training', [
     h('div.analyse__acpl', thunk('div.advice-summary', doRender, [ctrl, cacheKey])),
+    review ? renderReview(ctrl) : undefined,
     puzzleLink(ctrl),
   ]);
 }

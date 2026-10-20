@@ -58,6 +58,7 @@ import { nextGlyphSymbol, add3or5FoldGlyphs } from './nodeFinder';
 import pgnImport from './pgnImport';
 import { make as makePractice, type PracticeCtrl } from './practice/practiceCtrl';
 import { make as makeRetro, type RetroCtrl } from './retrospect/retroCtrl';
+import { ReviewCtrl } from './review/reviewCtrl';
 import { SettingsCtrl } from './settingsCtrl';
 import { make as makeSocket, type Socket } from './socket';
 import type GamebookPlayCtrl from './study/gamebook/gamebookPlayCtrl';
@@ -93,6 +94,7 @@ export default class AnalyseCtrl implements CevalHandler {
   explorer: ExplorerCtrl;
   forecast?: ForecastCtrl;
   retro?: RetroCtrl;
+  review: ReviewCtrl = new ReviewCtrl(this);
   fork: ForkCtrl;
   practice?: PracticeCtrl;
   study?: StudyCtrl;
@@ -902,6 +904,16 @@ export default class AnalyseCtrl implements CevalHandler {
       this.closeTools();
       this.retro = makeRetro(this, this.bottomColor());
     }
+    this.setAutoShapes();
+  };
+
+  toggleReview = (): void => {
+    const enable = !this.review.active();
+    if (enable) {
+      this.retro = undefined;
+      this.togglePractice(false);
+    }
+    this.review.enabled(enable);
     this.setAutoShapes();
   };
 

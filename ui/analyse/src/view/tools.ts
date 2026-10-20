@@ -8,6 +8,7 @@ import { view as forkView } from '@/fork';
 import type { ConcealOf } from '@/interfaces';
 import practiceView from '@/practice/practiceView';
 import retroView from '@/retrospect/retroView';
+import { renderMoveCard } from '@/review/reviewView';
 import { renderNextChapter } from '@/study/nextChapter';
 import type * as studyDeps from '@/study/studyDeps';
 import { addChapterId, renderResult, type ViewContext } from '@/view/components';
@@ -28,6 +29,7 @@ export function renderTools({ ctrl, deps, concealOf, allowVideo }: ViewContext, 
     deps?.gbEdit.running(ctrl) ? deps?.gbEdit.render(ctrl) : undefined,
     renderBackToLiveButton(ctrl),
     forkView(ctrl, concealOf),
+    renderMoveCard(ctrl),
     retroView(ctrl) || explorerView(ctrl) || practiceView(ctrl),
     ctrl.actionMenu() && actionMenu(ctrl),
   ]);

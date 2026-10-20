@@ -1,0 +1,157 @@
+review-badge {
+  @extend %base-font;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: 1.5em;
+  height: 1.5em;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 0.75em;
+  font-weight: bold;
+  line-height: 1;
+  letter-spacing: -0.05em;
+  vertical-align: middle;
+
+  &::before {
+    font-size: 1em;
+  }
+}
+
+.tview2 review-badge {
+  margin-inline-start: 0.3em;
+}
+
+.advice-summary__actions {
+  @extend %flex-center;
+
+  justify-content: center;
+  gap: 0.5em;
+}
+
+.game-review {
+  @extend %box-neat;
+
+  margin-top: $analyse-block-gap;
+  padding: 0.75em 1em 1em;
+  background: $c-bg-box;
+  font-size: 0.9em;
+
+  &__summary {
+    width: 100%;
+
+    th,
+    td {
+      padding: 0.15em 0.4em;
+    }
+
+    tbody th {
+      @extend %flex-center-nowrap;
+
+      gap: 0.6em;
+      font-weight: normal;
+    }
+
+    td {
+      width: 5em;
+      text-align: center;
+      font-weight: bold;
+
+      &.zero {
+        color: $c-font-dimmer;
+        font-weight: normal;
+      }
+
+      &.jump {
+        cursor: pointer;
+
+        &:hover {
+          color: $c-link;
+        }
+      }
+    }
+  }
+
+  &__accuracy {
+    th,
+    td {
+      font-weight: bold;
+      padding-bottom: 0.5em;
+    }
+  }
+
+  &__moments {
+    @extend %flex-column;
+
+    gap: 0.2em;
+    margin-top: 1em;
+
+    > strong {
+      margin-bottom: 0.3em;
+    }
+  }
+
+  &__moment {
+    @extend %flex-center-nowrap;
+
+    gap: 0.5em;
+    padding: 0.2em 0.4em;
+    border-radius: $box-radius-size;
+    color: $c-font;
+    cursor: pointer;
+
+    &:hover,
+    &.active {
+      background: $c-bg-zebra;
+    }
+
+    move {
+      @extend %san;
+    }
+  }
+
+  &__label {
+    font-weight: bold;
+  }
+
+  &__best {
+    @extend %nowrap-ellipsis;
+
+    color: $c-font-dim;
+  }
+
+  &__eval {
+    @extend %roboto;
+
+    margin-inline-start: auto;
+    color: $c-font-dim;
+    white-space: nowrap;
+  }
+
+  &__card {
+    @extend %flex-center-nowrap;
+
+    gap: 0.7em;
+    padding: 0.5em 1em;
+    border-top: 1px solid $c-border;
+
+    review-badge {
+      font-size: 1em;
+    }
+
+    move {
+      @extend %san;
+    }
+
+    em {
+      display: block;
+      color: $c-font-dim;
+    }
+
+    .game-review__eval {
+      align-self: flex-start;
+    }
+  }
+}
