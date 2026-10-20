@@ -14,6 +14,7 @@ import { last } from 'lib/tree/ops';
 import type { ServerEval, TreeNode } from 'lib/tree/types';
 
 import type AnalyseCtrl from './ctrl';
+import { boardShape } from './review/reviewView';
 import { tagsResult } from './study/studyTags';
 
 const pieceDrop = (key: Key, role: Role, color: Color): DrawShape => ({
@@ -184,11 +185,14 @@ export function compute(ctrl: AnalyseCtrl): DrawShape[] {
     });
   }
   if (ctrl.showMoveAnnotations()) {
-    const glyphs = ctrl.visibleGlyphs();
+    const review = ctrl.review.active() ? ctrl.review.get(node) : undefined;
+    const glyphs = ctrl.visibleGlyphs().filter(g => !review || !g.comp);
     const liveGlyph = ctrl.liveAnnotate?.get(ctrl.path);
     if (liveGlyph && ctrl.settings.showLiveAnnotations && !glyphs.some(g => g.id <= 6))
       glyphs.push(liveGlyph);
     shapes = shapes.concat(annotationShapes({ ...ctrl.node, glyphs }, shapes));
+    const reviewShape = review && boardShape(review, shapes);
+    if (reviewShape) shapes.push(reviewShape);
   }
   if (ctrl.showVariationArrows()) hiliteVariations(ctrl, shapes);
 

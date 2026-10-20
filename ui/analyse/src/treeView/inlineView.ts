@@ -10,6 +10,7 @@ import { type VNode, type LooseVNodes, hl } from 'lib/view';
 import type AnalyseCtrl from '@/ctrl';
 import type { DiscloseState } from '@/idbTree';
 import type { Conceal } from '@/interfaces';
+import { renderBadge } from '@/review/reviewView';
 import { authorText } from '@/study/studyComments';
 import { renderMoveNodes, renderIndex } from '@/view/components';
 
@@ -168,7 +169,9 @@ export class InlineView {
       'pending-deletion': path.startsWith(ctrl.pendingDeletionPath() || ' '),
       'pending-copy': ctrl.isPendingCopy(path, isMainline),
     };
-    const glyphs = ctrl.visibleGlyphs(node);
+    const review = ctrl.review.active() ? ctrl.review.get(node) : undefined;
+    // the review badge replaces the analysis glyphs
+    const glyphs = ctrl.visibleGlyphs(node).filter(g => !review || !g.comp);
     const liveGlyph = ctrl.liveAnnotate?.get(path);
     if (liveGlyph && ctrl.settings.showLiveAnnotations && !glyphs.some(g => g.id <= this.glyphs.length))
       glyphs.push(liveGlyph);
@@ -178,16 +181,18 @@ export class InlineView {
         .filter(Boolean)
         .forEach(cls => (classes[cls] = true));
     }
+    const moveNodes = renderMoveNodes(
+      node,
+      isMainline && !this.inline,
+      ctrl.showMoveGlyphs(),
+      ctrl.allowedEval(node) || false,
+      glyphs,
+    );
+    if (review) moveNodes.splice(1, 0, renderBadge(review.classification));
     return hl('move', { attrs: { p: path }, class: classes }, [
       parentDisclose && this.disclosureBtn(parentNode, parentPath),
       withIndex && renderIndex(node.ply, true),
-      renderMoveNodes(
-        node,
-        isMainline && !this.inline,
-        ctrl.showMoveGlyphs(),
-        ctrl.allowedEval(node) || false,
-        glyphs,
-      ),
+      moveNodes,
     ]);
   }
 
